@@ -67,10 +67,3 @@ model.compile(optimizer=Adam(), loss=SparseCategoricalCrossentropy(
 mlflow.tensorflow.autolog()
 model.fit(x=train_ds, validation_data=test_ds,
           epochs=10, batch_size=BATCH_SIZE)
-
-artifact_path = mlflow.get_artifact_uri()
-
-with open("text.txt", "w") as f:
-    f.write("Hello, World!")
-
-mlflow.log_artifact("text.txt")
