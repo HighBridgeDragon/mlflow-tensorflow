@@ -1,0 +1,9 @@
+name: mlflow-tensorflow
+
+conda_env: environment.yaml
+
+entry_points:
+  main:
+    parameters:
+      s: {type:int}
+    command: "python train.py --sample_usage_rate {s}"
