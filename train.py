@@ -11,7 +11,6 @@ from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D, Flatten, InputLaye
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import SparseCategoricalCrossentropy
 
-mlflow.set_tracking_uri("http://192.168.11.11:5000")
 mlflow.set_experiment("{}-classification".format(ds_info.name))
 
 parser = argparse.ArgumentParser(prog=Path(__file__).name, description="{}のスクラッチ学習".format(ds_info.name), add_help=True)
