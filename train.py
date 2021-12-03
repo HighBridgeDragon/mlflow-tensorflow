@@ -25,7 +25,7 @@ def preprocess_dataset(image:tf.Tensor, label:tf.Tensor):
     image = tf.cast(image, dtype=tf.float32)/255. - 0.50
     return (image, label)
 
-mlflow.log_param("sample_usage_rate", SAMPLE_USAGE_RATE * 0.01)
+mlflow.log_param("Sample Usage Rate", SAMPLE_USAGE_RATE * 0.01)
 
 train_ds, test_ds = tfds.load(ds_info.name, split=["train[:{}%]".format(SAMPLE_USAGE_RATE), "train[80%:]"], as_supervised=True)
 
@@ -41,11 +41,6 @@ test_ds = test_ds.map(preprocess_dataset)
 
 train_ds = train_ds.shuffle(NUM_EXAMPLES//4).batch(BATCH_SIZE)
 test_ds = test_ds.batch(BATCH_SIZE)
-
-import tensorflow_hub as hub
-URL = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4"
-feature_extractor = hub.KerasLayer(URL, input_shape = INPUT_SHAPE)
-feature_extractor.trainable = False
 
 model = Sequential(
     [
@@ -64,5 +59,6 @@ model.summary()
 model.compile(optimizer=Adam(), loss=SparseCategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
 
 mlflow.tensorflow.autolog()
-history = model.fit(x = train_ds, validation_data=test_ds, epochs=3, batch_size=BATCH_SIZE)
+history = model.fit(x = train_ds, validation_data=test_ds, epochs=10, batch_size=BATCH_SIZE)
+
 
