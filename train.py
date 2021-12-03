@@ -14,7 +14,6 @@ from tensorflow.keras.losses import SparseCategoricalCrossentropy
 
 with mlflow.start_run():
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-    mlflow.set_experiment("{}-classification".format(ds_info.name))
 
     parser = argparse.ArgumentParser(prog=Path(__file__).name, description="{}のスクラッチ学習".format(ds_info.name), add_help=True)
 
