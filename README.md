@@ -11,5 +11,5 @@ python train.py -s 80
 2. MLflow Projectsを介して実行
 
 ```bash
-mlflow run https://github.com/HighBridgeDragon/mlflow-tensorflow --experiment_id={} -v origin/main -P s=80
+mlflow run https://github.com/HighBridgeDragon/mlflow-tensorflow --experiment-id={} -v origin/main -P s=80
 ```
