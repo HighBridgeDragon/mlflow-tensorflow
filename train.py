@@ -13,6 +13,7 @@ import tensorflow_datasets as tfds
 import numpy as np
 import io
 import cv2
+from mlflow.models.signature import infer_signature
 
 ds_info = DatasetClass().info
 
@@ -46,6 +47,7 @@ BATCH_SIZE = 256
 print("Number of Class: {}, Input Shape: {}, Batch Size: {}".format(
     NUM_CLASSES, INPUT_SHAPE, BATCH_SIZE))
 
+
 def save_to_mlflow_data_examples(ds: tf.data.Dataset):
     # ローカル実行では、画像ビューワが立ち上がる。show_examples内のply.showをコメントアウトすべし。
     fig = tfds.show_examples(train_ds, ds_info, rows=4, cols=4)
@@ -58,6 +60,7 @@ def save_to_mlflow_data_examples(ds: tf.data.Dataset):
     examples = cv2.imdecode(examples, cv2.IMREAD_UNCHANGED)
 
     mlflow.log_image(examples, "examples.png")
+
 
 save_to_mlflow_data_examples(train_ds)
 
@@ -84,6 +87,11 @@ model.summary()
 model.compile(optimizer=Adam(), loss=SparseCategoricalCrossentropy(
     from_logits=True), metrics=["accuracy"])
 
-mlflow.tensorflow.autolog()
+mlflow.tensorflow.autolog(log_models=False)
 model.fit(x=train_ds, validation_data=test_ds,
           epochs=10, batch_size=BATCH_SIZE)
+
+for image, _ in test_ds.take(1):
+    infer_sig = infer_signature(image.numpy(), model.predict(image.numpy()))
+
+mlflow.keras.log_model(model, "log_model", signature=infer_sig)
