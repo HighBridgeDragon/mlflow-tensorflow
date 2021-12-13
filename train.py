@@ -9,6 +9,11 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from pathlib import Path
 from tensorflow_datasets.image_classification import Cifar10 as DatasetClass
+import tensorflow_datasets as tfds
+import numpy as np
+import io
+import cv2
+
 ds_info = DatasetClass().info
 
 mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
@@ -40,6 +45,21 @@ BATCH_SIZE = 256
 
 print("Number of Class: {}, Input Shape: {}, Batch Size: {}".format(
     NUM_CLASSES, INPUT_SHAPE, BATCH_SIZE))
+
+def save_to_mlflow_data_examples(ds: tf.data.Dataset):
+    # ローカル実行では、画像ビューワが立ち上がる。show_examples内のply.showをコメントアウトすべし。
+    fig = tfds.show_examples(train_ds, ds_info, rows=4, cols=4)
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=180, )
+    buf.seek(0)
+    examples = np.frombuffer(buf.getvalue(), dtype=np.uint8)
+    buf.close()
+
+    examples = cv2.imdecode(examples, cv2.IMREAD_UNCHANGED)
+
+    mlflow.log_image(examples, "examples.png")
+
+save_to_mlflow_data_examples(train_ds)
 
 train_ds = train_ds.map(preprocess_dataset)
 test_ds = test_ds.map(preprocess_dataset)
