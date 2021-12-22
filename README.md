@@ -19,6 +19,6 @@ mlflow run https://github.com/HighBridgeDragon/mlflow-tensorflow --experiment-id
   
   mlflow は、以下のコマンドでインストールします。
 ```bash
-  conda install mlflow
+conda install mlflow
 ```
 
